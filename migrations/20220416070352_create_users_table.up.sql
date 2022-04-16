@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
   email char(255) NOT NULL,
   phone_no char(12) NULL,
   avatar_url varchar NULL,
-  dob date NULL,
+  dob timestamp NULL,
   address varchar NULL,
   grade int NULL,
   school varchar NULL,

@@ -1,14 +1,13 @@
-package healthcheck
+package auth
 
 import "github.com/gin-gonic/gin"
 
 func SetupRouter(router *gin.Engine) {
-	controller := router.Group("/healthcheck")
+	controller := router.Group("/auth")
 
-	controller.GET("/", func (c *gin.Context) {
+	controller.POST("/sign-in", func (c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "Hello world!!",
 		})
 	})
 }
-
