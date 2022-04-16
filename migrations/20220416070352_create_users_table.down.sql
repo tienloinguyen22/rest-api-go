@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS users;
+DROP INDEX IF EXISTS users_unique_email;
+DROP TYPE IF EXISTS gender;
+DROP TYPE IF EXISTS signup_provider;
+DROP TYPE IF EXISTS owner_type;
+DROP EXTENSION IF EXISTS "uuid-ossp";
