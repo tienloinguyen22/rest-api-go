@@ -2,22 +2,31 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/tienloinguyen22/edwork-api-go/adapters/inbound"
-	"github.com/tienloinguyen22/edwork-api-go/adapters/outbound"
+	_ "github.com/lib/pq"
+	"github.com/tienloinguyen22/edwork-api-go/adapters"
 	"github.com/tienloinguyen22/edwork-api-go/configs"
+	"github.com/tienloinguyen22/edwork-api-go/core/auth"
+	"github.com/tienloinguyen22/edwork-api-go/core/healthcheck"
+	"github.com/tienloinguyen22/edwork-api-go/core/users"
 )
 
 func main() {
-	// Env configs
-	configs.InitializeConfigs()
+	// Prerequisites
+	cfg := configs.InitializeConfigs()
+	firebaseAdmin := adapters.InitializeFirebaseAdmin(cfg.FIREBASE_CREDENTIALS_FILE)
+	db := adapters.InitializePostgresql(cfg.DB_URI)
 
-	// Firebase admin
-	outbound.InitializeFirebaseAdmin()
+	// Repositories
+	userRepo := users.NewUserRepository(db)
 
-	// Router
+	// Service
+	authService := auth.NewAuthService(firebaseAdmin, userRepo)
+
+	// Controller
 	r := gin.Default()
-	inbound.SetupRouter(r)
+	healthcheck.NewHealthcheckController(r)
+	auth.NewAuthController(r, authService)
 
 	// Start app
-	r.Run(configs.Configs.ADDRESS)
+	r.Run(cfg.ADDRESS)
 }
