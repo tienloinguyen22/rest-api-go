@@ -6,27 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
 )
-
-type User struct {
-	ID uuid.UUID `db:"id"`
-	FullName string `db:"full_name"`
-	Email string `db:"email"`
-	PhoneNo sql.NullString `db:"phone_no"`
-	AvatarUrl sql.NullString `db:"avatar_url"`
-	Dob sql.NullTime `db:"dob"`
-	Address sql.NullString `db:"address"`
-	Grade sql.NullInt64 `db:"grade"`
-	School sql.NullString `db:"school"`
-	Gender sql.NullString `db:"gender"`
-	OwnerType sql.NullString `db:"owner_type"`
-	SignupProvider string `db:"signup_provider"`
-	BankTransferCode string `db:"bank_transfer_code"`
-	FirebaseID string `db:"firebase_id"`
-	IsActive bool `db:"is_active"`
-	utils.CommonEntityFields
-}
 
 type UserRepository struct {
 	DB *sqlx.DB
@@ -47,19 +27,19 @@ func (r UserRepository) FindByEmail(ctx context.Context, email string) (*User, e
 		}
 		return nil, err
 	}
-
 	return &user, nil
 }
 
 func (r UserRepository) Create(ctx context.Context, user *User) (*User, error) {
 	query := `
 		INSERT INTO users(
-			full_name, email, phone_no, avatar_url, dob, address, grade, school, gender, owner_type, signup_provider, bank_transfer_code, firebase_id, created_by, updated_by
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;
+			id, full_name, email, phone_no, avatar_url, dob, address, grade, school, gender, owner_type, signup_provider, bank_transfer_code, firebase_id, created_by, updated_by
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id, is_active;
 	`
 	row := r.DB.QueryRowxContext(
 		ctx,
 		query,
+		user.ID,
 		user.FullName,
 		user.Email,
 		user.PhoneNo,
@@ -73,10 +53,10 @@ func (r UserRepository) Create(ctx context.Context, user *User) (*User, error) {
 		user.SignupProvider,
 		user.BankTransferCode,
 		user.FirebaseID,
-		"self",
-		"self",
+		user.ID.String(),
+		user.ID.String(),
 	)
-	if err := row.Scan(&user.ID); err != nil {
+	if err := row.Scan(&user.ID, &user.IsActive); err != nil {
 		return user, err
 	}
 	return user, nil

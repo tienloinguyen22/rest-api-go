@@ -22,4 +22,4 @@ go.work
 
 # Env
 .env
-pets-hotel-develop-firebase-adminsdk.json
+firebase-adminsdk.json

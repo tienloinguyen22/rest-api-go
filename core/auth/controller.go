@@ -1,9 +1,8 @@
 package auth
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/tienloinguyen22/edwork-api-go/utils"
 )
 
 type AuthController struct {
@@ -26,10 +25,7 @@ func (c AuthController) SetupRouter(router *gin.Engine) {
 
 		user, err := c.AuthService.SignIn(ctx, &payload)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
+			utils.HandleError(ctx, err)
 		}
 
 		ctx.JSON(200, user)
