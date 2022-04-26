@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
   email varchar NOT NULL,
   phone_no varchar NULL,
   avatar_url varchar NULL,
-  dob timestamp NULL,
+  dob timestamptz NULL,
   address varchar NULL,
   grade int NULL,
   school varchar NULL,
@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS users (
   bank_transfer_code varchar NOT NULL,
   firebase_id varchar NOT NULL,
   is_active bool DEFAULT true,
-  created_at timestamp NOT NULL DEFAULT now(),
+  created_at timestamptz NOT NULL DEFAULT now(),
   created_by varchar NOT NULL,
-  updated_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
   updated_by varchar NOT NULL,
   CONSTRAINT users_pk PRIMARY KEY (id)
 );

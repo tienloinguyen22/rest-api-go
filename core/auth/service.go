@@ -47,8 +47,7 @@ func (s AuthService) SignIn(c *gin.Context, payload *SignInPayload) (*users.User
 	if existedUser != nil {
 		existedUser.FirebaseID = firebaseInfo.UID
 		existedUser.SignupProvider = utils.GetSignupProvider(firebaseInfo)
-		s.UserRepo.UpdateFirebaseInfoByID(c, existedUser.ID, existedUser)
-		return existedUser, nil
+		return s.UserRepo.UpdateFirebaseInfoByID(c, existedUser)
 	}
 
 	// New user => Create user record in postgres

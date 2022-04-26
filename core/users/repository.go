@@ -3,8 +3,8 @@ package users
 import (
 	"context"
 	"database/sql"
+	"time"
 
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -62,15 +62,13 @@ func (r UserRepository) Create(ctx context.Context, user *User) (*User, error) {
 	return user, nil
 }
 
-func (r UserRepository) UpdateFirebaseInfoByID(ctx context.Context, id uuid.UUID, user *User) (*User, error) {
+func (r UserRepository) UpdateFirebaseInfoByID(ctx context.Context, user *User) (*User, error) {
 	query := `
-		UPDATE users SET firebase_id=$1, signup_provider=$2 WHERE id=$3
+		UPDATE users SET firebase_id=$1, signup_provider=$2, updated_at=$3, updated_by=$4 WHERE id=$5 RETURNING firebase_id, signup_provider, updated_by, updated_at
 	`
-	if err := r.DB.GetContext(ctx, &user, query, user.FirebaseID, user.SignupProvider, user.ID); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, err
+	row := r.DB.QueryRowxContext(ctx, query, user.FirebaseID, user.SignupProvider, time.Now(), user.ID, user.ID)
+	if err := row.Scan(&user.FirebaseID, &user.SignupProvider, &user.UpdatedBy, &user.UpdatedAt); err != nil {
+		return user, err
 	}
 	return user, nil
 }
