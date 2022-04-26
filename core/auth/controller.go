@@ -1,16 +1,22 @@
 package auth
 
 import (
+	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
+	"github.com/tienloinguyen22/edwork-api-go/core/users"
 	"github.com/tienloinguyen22/edwork-api-go/utils"
 )
 
 type AuthController struct {
+	FirebaseAdmin *firebase.App
+	UserRepo *users.UserRepository
 	AuthService *AuthService
 }
 
-func NewAuthController(router *gin.Engine, authService *AuthService) {
+func NewAuthController(router *gin.Engine, firebaseAdmin *firebase.App, userRepo *users.UserRepository, authService *AuthService) {
 	authController := &AuthController{
+		FirebaseAdmin: firebaseAdmin,
+		UserRepo: userRepo,
 		AuthService: authService,
 	}
 	authController.SetupRouter(router)

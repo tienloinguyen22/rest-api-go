@@ -25,7 +25,7 @@ func main() {
 	// Controller
 	r := gin.Default()
 	healthcheck.NewHealthcheckController(r)
-	auth.NewAuthController(r, authService)
+	auth.NewAuthController(r, firebaseAdmin, userRepo, authService)
 
 	// Start app
 	r.Run(cfg.ADDRESS)

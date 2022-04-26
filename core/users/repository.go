@@ -30,6 +30,18 @@ func (r UserRepository) FindByEmail(ctx context.Context, email string) (*User, e
 	return &user, nil
 }
 
+func (r UserRepository) FindByFirebaseID(ctx context.Context, firebaseId string) (*User, error) {
+	var user User
+	query := `SELECT * FROM users WHERE firebase_id=$1`
+	if err := r.DB.GetContext(ctx, &user, query, firebaseId); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r UserRepository) Create(ctx context.Context, user *User) (*User, error) {
 	query := `
 		INSERT INTO users(
