@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,6 +17,18 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{
 		DB: db,
 	}
+}
+
+func (r UserRepository) FindByID(ctx context.Context, userID uuid.UUID) (*User, error) {
+	var user User
+	query := `SELECT * FROM users WHERE id=$1`
+	if err := r.DB.GetContext(ctx, &user, query, userID.String()); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (r UserRepository) FindByEmail(ctx context.Context, email string) (*User, error) {

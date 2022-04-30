@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tienloinguyen22/edwork-api-go/core/users"
 	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"gopkg.in/validator.v2"
 )
 
 type AuthController struct {
@@ -27,11 +28,21 @@ func (c AuthController) SetupRouter(router *gin.Engine) {
 
 	controller.POST("/sign-in", func (ctx *gin.Context) {
 		var payload SignInPayload
-		ctx.BindJSON(&payload)
+		err := ctx.ShouldBindJSON(&payload)
+		if err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
+
+		if err := validator.Validate(&payload); err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
 
 		user, err := c.AuthService.SignIn(ctx, &payload)
 		if err != nil {
 			utils.HandleError(ctx, err)
+			return
 		}
 
 		ctx.JSON(200, user)

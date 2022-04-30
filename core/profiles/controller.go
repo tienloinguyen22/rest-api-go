@@ -30,6 +30,7 @@ func (c ProfileController) SetupRouter(router *gin.Engine) {
 		user, err := c.ProfileService.GetAuthenticatedUserProfile(ctx)
 		if err != nil {
 			utils.HandleError(ctx, err)
+			return
 		}
 
 		ctx.JSON(200, user)

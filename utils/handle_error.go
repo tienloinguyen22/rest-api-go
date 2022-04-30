@@ -8,7 +8,7 @@ import (
 )
 
 func HandleError(ctx *gin.Context, err error) {
-	re, ok := err.(*ApiError)
+	re, ok := err.(ApiError)
 	if ok {
 		fmt.Printf("%v: %v\n", re.Code, re.Err)
 		ctx.JSON(re.Status, gin.H{

@@ -22,12 +22,17 @@ func NewProfileService(userRepo *users.UserRepository) *ProfileService {
 func (s ProfileService) GetAuthenticatedUserProfile(ctx *gin.Context) (*users.User, error) {
 	value, exists := ctx.Get("user")
 	if !exists {
-		return nil, utils.NewApiError(http.StatusForbidden, "middlewares.authenticated.not-authenticated", errors.New("not authenticated"))
+		return nil, utils.NewApiError(http.StatusForbidden, "profiles.get-user-profile.not-authenticated", errors.New("not authenticated"))
 	}
 
-	user, ok := value.(*users.User)
+	authenticatedUser, ok := value.(*users.User)
 	if !ok {
-		return nil,	utils.NewApiError(http.StatusForbidden, "middlewares.authenticated.not-authenticated", errors.New("not authenticated"))
+		return nil,	utils.NewApiError(http.StatusForbidden, "profiles.get-user-profile.not-authenticated", errors.New("not authenticated"))
+	}
+
+	user, err := s.UserRepo.FindByID(ctx, authenticatedUser.ID)
+	if err != nil {
+		return nil, utils.NewApiError(http.StatusInternalServerError, "profiles.get-user-profile.cant-get-user-by-id", err)
 	}
 
 	return user, nil
