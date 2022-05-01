@@ -6,6 +6,7 @@ import (
 	"github.com/tienloinguyen22/edwork-api-go/adapters"
 	"github.com/tienloinguyen22/edwork-api-go/configs"
 	"github.com/tienloinguyen22/edwork-api-go/core/auth"
+	"github.com/tienloinguyen22/edwork-api-go/core/fileuploads"
 	"github.com/tienloinguyen22/edwork-api-go/core/healthcheck"
 	"github.com/tienloinguyen22/edwork-api-go/core/profiles"
 	"github.com/tienloinguyen22/edwork-api-go/core/users"
@@ -23,12 +24,14 @@ func main() {
 	// Service
 	authService := auth.NewAuthService(firebaseAdmin, userRepo)
 	profileService := profiles.NewProfileService(userRepo)
+	fileUploadService := fileuploads.NewFileUploadService()
 
 	// Controller
 	r := gin.Default()
 	healthcheck.NewHealthcheckController(r)
 	auth.NewAuthController(r, firebaseAdmin, userRepo, authService)
 	profiles.NewProfileController(r, firebaseAdmin, userRepo, profileService)
+	fileuploads.NewFileUploadController(r, firebaseAdmin, userRepo, fileUploadService)
 
 	// Start app
 	r.Run(cfg.ADDRESS)

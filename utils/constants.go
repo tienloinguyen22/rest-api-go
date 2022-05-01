@@ -19,3 +19,14 @@ var (
 	SIGN_UP_PROVIDER_GOOGLE = "GOOGLE"
 	SIGN_UP_PROVIDER_APPLE = "APPLE"
 )
+
+var (
+	REGEX_IMAGE_EXT = `\.(gif|jpg|jpeg|tiff|png|JPG|PNG|JPEG|GIF|TIFF)$`
+	REGEX_PHONE_NO = `^([+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*){8,}$`
+	REGEX_EMAIL = `^[a-zA-Z][a-zA-Z0-9_.+-]{0,40}@[a-z0-9]{2,}(.[a-z0-9]{2,4}){1,}$`
+	REGEX_PASSWORD = `^.{6,}$`
+)
+
+var (
+	ALLOW_FILE_SIZE_IMAGE = 5000000
+)
