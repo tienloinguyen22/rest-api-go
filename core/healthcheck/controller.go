@@ -16,6 +16,7 @@ func (c HealthcheckController) SetupRouter(router *gin.Engine) {
 		ctx.JSON(200, gin.H{
 			"message": "Hello world!!",
 		})
+		ctx.Abort()
 	})
 }
 

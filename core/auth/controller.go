@@ -46,5 +46,6 @@ func (c AuthController) SetupRouter(router *gin.Engine) {
 		}
 
 		ctx.JSON(200, user)
+		ctx.Abort()
 	})
 }

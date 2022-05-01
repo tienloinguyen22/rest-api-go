@@ -16,6 +16,7 @@ func HandleError(ctx *gin.Context, err error) {
 			"code": re.Code,
 			"message": re.Err.Error(),
 		})
+		ctx.Abort()
 	} else {
 		fmt.Printf("internal server error: %v\n", re.Err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -23,5 +24,6 @@ func HandleError(ctx *gin.Context, err error) {
 			"code": "common.internal-server-error",
 			"message": err.Error(),
 		})
+		ctx.Abort()
 	}
 }

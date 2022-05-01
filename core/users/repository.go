@@ -97,3 +97,43 @@ func (r UserRepository) UpdateFirebaseInfoByID(ctx context.Context, user *User) 
 	}
 	return user, nil
 }
+
+func (r UserRepository) UpdateUserInfoByID(ctx context.Context, user *User) (*User, error) {
+	query := `
+		UPDATE users
+		SET
+			full_name=$1,
+			phone_no=$2,
+			avatar_url=$3,
+			dob=$4,
+			address=$5,
+			grade=$6,
+			school=$7,
+			gender=$8,
+			owner_type=$9,
+			updated_at=$10,
+			updated_by=$11
+		WHERE id=$12
+		RETURNING full_name, phone_no, avatar_url, dob, address, grade, school, gender, owner_type, updated_by, updated_at
+	`
+	row := r.DB.QueryRowxContext(
+		ctx,
+		query,
+		user.FullName,
+		user.PhoneNo,
+		user.AvatarUrl,
+		user.Dob,
+		user.Address,
+		user.Grade,
+		user.School,
+		user.Gender,
+		user.OwnerType,
+		time.Now(),
+		user.ID,
+		user.ID,
+	)
+	if err := row.Scan(&user.FullName, &user.PhoneNo, &user.AvatarUrl, &user.Dob, &user.Address, &user.Grade, &user.School, &user.Gender, &user.OwnerType, &user.UpdatedBy, &user.UpdatedAt); err != nil {
+		return user, err
+	}
+	return user, nil
+}
