@@ -1,6 +1,8 @@
 package healthcheck
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type HealthcheckController struct {}
 

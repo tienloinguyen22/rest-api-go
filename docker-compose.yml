@@ -14,8 +14,19 @@ services:
     networks:
       - edwork-api-go
     restart: unless-stopped
+  edwork-redis:
+    container_name: edwork-redis
+    image: redis:latest
+    volumes:
+      - edwork-redis-data:/data/redis
+    ports:
+      - 6379:6379
+    networks:
+      - edwork-api-go
+    restart: unless-stopped
 volumes:
   edwork-postgres-data:
+  edwork-redis-data:
 networks:
   edwork-api-go:
     driver: bridge
