@@ -26,6 +26,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.2.0 // indirect
 	github.com/googleapis/go-type-adapters v1.0.0 // indirect
+	github.com/h2non/bimg v1.1.9 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

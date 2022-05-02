@@ -27,7 +27,7 @@ func main() {
 
 	// Service
 	authService := auth.NewAuthService(firebaseAdmin, userRepo)
-	profileService := profiles.NewProfileService(userRepo)
+	profileService := profiles.NewProfileService(mq, userRepo)
 	fileUploadService := fileuploads.NewFileUploadService()
 	consumerService := consumers.NewConsumerService()
 

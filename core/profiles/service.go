@@ -8,17 +8,21 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tienloinguyen22/edwork-api-go/adapters"
+	"github.com/tienloinguyen22/edwork-api-go/core/consumers"
 	"github.com/tienloinguyen22/edwork-api-go/core/users"
 	"github.com/tienloinguyen22/edwork-api-go/utils"
 )
 
 type ProfileService struct {
+	MQ *adapters.MessageQueue
 	UserRepo *users.UserRepository
 }
 
-func NewProfileService(userRepo *users.UserRepository) *ProfileService {
+func NewProfileService(mq *adapters.MessageQueue, userRepo *users.UserRepository) *ProfileService {
 	return &ProfileService{
 		UserRepo: userRepo,
+		MQ: mq,
 	}
 }
 
@@ -122,6 +126,17 @@ func (s ProfileService) UpdateUserProfile(ctx *gin.Context, payload *UpdateUserP
 				Valid: true,
 			},
 		}
+	}
+	if payload.AvatarUrl != "" && payload.AvatarUrl != user.AvatarUrl.String {
+		user.AvatarUrl = utils.NullString{
+			NullString: sql.NullString{
+				String: payload.AvatarUrl,
+				Valid: true,
+			},
+		}
+		s.MQ.Publish("RESIZE_IMAGE", consumers.ResizeImagePayload{
+			Filename: payload.AvatarUrl,
+		})
 	}
 	
 	return s.UserRepo.UpdateUserInfoByID(ctx, user)

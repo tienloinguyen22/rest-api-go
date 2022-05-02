@@ -3,7 +3,6 @@ package fileuploads
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"path/filepath"
 	"regexp"
 
@@ -16,14 +15,6 @@ type FileUploadService struct {}
 
 func NewFileUploadService() *FileUploadService {
 	return &FileUploadService{}
-}
-
-func ensureFolderExist(path string) error {
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return os.MkdirAll(path, os.ModePerm)
-	}
-	return err
 }
 
 func (s FileUploadService) UploadImage(ctx *gin.Context) (*UploadFileResult, error) {
@@ -52,7 +43,7 @@ func (s FileUploadService) UploadImage(ctx *gin.Context) (*UploadFileResult, err
 	}
 
 	// Save file to /temp folder
-	err = ensureFolderExist("./temp")
+	err = utils.EnsureFolderExist("./temp")
 	if err != nil {
 		return nil, utils.NewApiError(
 			http.StatusInternalServerError,
