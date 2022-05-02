@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/tienloinguyen22/edwork-api-go/adapters"
@@ -41,6 +42,8 @@ func main() {
 
 	// Controller
 	r := gin.Default()
+	r.Use(static.Serve("/images", static.LocalFile("./uploads", false)))
+	r.Use(static.Serve("/images", static.LocalFile("./temp", false)))
 	healthcheck.NewHealthcheckController(r)
 	auth.NewAuthController(r, firebaseAdmin, userRepo, authService)
 	profiles.NewProfileController(r, firebaseAdmin, userRepo, profileService)
