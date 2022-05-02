@@ -13,6 +13,7 @@ import (
 	"github.com/tienloinguyen22/edwork-api-go/core/fileuploads"
 	"github.com/tienloinguyen22/edwork-api-go/core/healthcheck"
 	"github.com/tienloinguyen22/edwork-api-go/core/profiles"
+	"github.com/tienloinguyen22/edwork-api-go/core/resetpassword"
 	"github.com/tienloinguyen22/edwork-api-go/core/users"
 )
 
@@ -22,15 +23,18 @@ func main() {
 	firebaseAdmin := adapters.InitializeFirebaseAdmin(cfg.FIREBASE_CREDENTIALS_FILE)
 	db := adapters.InitializePostgresql(cfg.DB_URI)
 	mq := adapters.InitializeMessageQueue(cfg.REDIS_URI)
+	emailClient := adapters.InitializeSmtpClient(cfg.EMAIL_HOST, cfg.EMAIL_PORT, cfg.EMAIL_USERNAME, cfg.EMAIL_PASSWORD)
 
 	// Repositories
 	userRepo := users.NewUserRepository(db)
+	resetPasswordTokenRepo := resetpassword.NewResetPasswordTokenRepository(db)
 
 	// Service
 	authService := auth.NewAuthService(firebaseAdmin, userRepo)
 	profileService := profiles.NewProfileService(mq, userRepo)
 	fileUploadService := fileuploads.NewFileUploadService()
 	consumerService := consumers.NewConsumerService()
+	resetPasswordService := resetpassword.NewResetPasswordService(firebaseAdmin, emailClient, resetPasswordTokenRepo, userRepo)
 
 	// Message queue
 	mq.Consume(adapters.ConsumerConfig{
@@ -48,6 +52,7 @@ func main() {
 	auth.NewAuthController(r, firebaseAdmin, userRepo, authService)
 	profiles.NewProfileController(r, firebaseAdmin, userRepo, profileService)
 	fileuploads.NewFileUploadController(r, firebaseAdmin, userRepo, fileUploadService)
+	resetpassword.NewResetPasswordController(r, resetPasswordService)
 
 	// Start app
 	r.Run(cfg.ADDRESS)

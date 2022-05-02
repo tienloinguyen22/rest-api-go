@@ -16,5 +16,5 @@ type ResetPasswordToken struct {
 }
 
 type RequestResetPasswordTokenPayload struct {
-	Email string
+	Email string `json:"email" validate:"nonzero"`
 }

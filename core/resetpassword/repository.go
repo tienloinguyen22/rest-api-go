@@ -40,8 +40,9 @@ func (r ResetPasswordTokenRepository) Create(ctx context.Context, resetPasswordT
 	row := r.DB.QueryRowxContext(
 		ctx,
 		query,
-		resetPasswordToken.ID,
+		resetPasswordToken.UserID,
 		resetPasswordToken.ExpiredAt,
+		resetPasswordToken.UserID,
 	)
 	if err := row.Scan(&resetPasswordToken.ID, &resetPasswordToken.ExpiredAt); err != nil {
 		return resetPasswordToken, err
