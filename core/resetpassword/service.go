@@ -8,26 +8,27 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
 	"github.com/tienloinguyen22/edwork-api-go/adapters"
+	"github.com/tienloinguyen22/edwork-api-go/core/consumers"
 	"github.com/tienloinguyen22/edwork-api-go/core/users"
 	"github.com/tienloinguyen22/edwork-api-go/utils"
 )
 
 type ResetPasswordService struct {
 	FirebaseAdmin *firebase.App
-	EmailClient *adapters.EmailClient
+	MQ *adapters.MessageQueue
 	ResetPasswordTokenRepo *ResetPasswordTokenRepository
 	UserRepo *users.UserRepository
 }
 
 func NewResetPasswordService(
 	firebaseAdmin *firebase.App,
-	emailClient *adapters.EmailClient,
+	mq *adapters.MessageQueue,
 	resetPasswordTokenRepo *ResetPasswordTokenRepository,
 	userRepo *users.UserRepository,
 ) *ResetPasswordService {
 	return &ResetPasswordService{
 		FirebaseAdmin: firebaseAdmin,
-		EmailClient: emailClient,
+		MQ: mq,
 		ResetPasswordTokenRepo: resetPasswordTokenRepo,
 		UserRepo: userRepo,
 	}
@@ -61,10 +62,15 @@ func (s ResetPasswordService) RequestResetPasswordToken(ctx *gin.Context, payloa
 	}
 
 	// Send email
-	return s.EmailClient.SendMail(&adapters.SendMailPayload{
-		From: "Neoflies <tienloinguyen22@gmail.com>",
-		To: []string{"tienloinguyen22@gmail.com"},
-		Subject: "Vestibulum ante ipsum primis in",
-		Body: fmt.Sprintf("<h1>%v</h1>", existedResetPasswordToken.ID.String()),
+	return s.MQ.Publish("SEND_MAIL", consumers.SendMailPayload{
+		Template: "forgot-password.html",
+		MailData: struct{
+			Fullname string
+			ResetPasswordLink string
+		}{
+			Fullname: existedUser.FullName,
+			ResetPasswordLink: fmt.Sprintf("http://localhost:3000/reset-password/%v", existedResetPasswordToken.ID.String()),
+		},
+		To: []string{payload.Email},
 	})
 }

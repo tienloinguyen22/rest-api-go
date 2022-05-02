@@ -33,8 +33,8 @@ func main() {
 	authService := auth.NewAuthService(firebaseAdmin, userRepo)
 	profileService := profiles.NewProfileService(mq, userRepo)
 	fileUploadService := fileuploads.NewFileUploadService()
-	consumerService := consumers.NewConsumerService()
-	resetPasswordService := resetpassword.NewResetPasswordService(firebaseAdmin, emailClient, resetPasswordTokenRepo, userRepo)
+	consumerService := consumers.NewConsumerService(emailClient)
+	resetPasswordService := resetpassword.NewResetPasswordService(firebaseAdmin, mq, resetPasswordTokenRepo, userRepo)
 
 	// Message queue
 	mq.Consume(adapters.ConsumerConfig{
@@ -42,6 +42,12 @@ func main() {
 		PollInterval: time.Second,
 		QueueName: "RESIZE_IMAGE",
 		Callback: consumerService.ResizeImage,
+	})
+	mq.Consume(adapters.ConsumerConfig{
+		PrefetchCount: 10,
+		PollInterval: time.Second,
+		QueueName: "SEND_MAIL",
+		Callback: consumerService.SendMail,
 	})
 
 	// Controller
