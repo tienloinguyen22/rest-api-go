@@ -1,4 +1,4 @@
-module github.com/tienloinguyen22/edwork-api-go
+module github.com/tienloinguyen22/rest-api-go
 
 go 1.17
 

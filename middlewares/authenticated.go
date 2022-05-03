@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tienloinguyen22/edwork-api-go/core/users"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/core/users"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 )
 
 func Authenticated() gin.HandlerFunc {

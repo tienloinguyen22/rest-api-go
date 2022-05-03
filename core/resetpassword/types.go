@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 )
 
 type ResetPasswordToken struct {

@@ -3,8 +3,8 @@ package auth
 import (
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
-	"github.com/tienloinguyen22/edwork-api-go/core/users"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/core/users"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 	"gopkg.in/validator.v2"
 )
 

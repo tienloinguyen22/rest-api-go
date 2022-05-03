@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 )
 
 type FileUploadService struct {}

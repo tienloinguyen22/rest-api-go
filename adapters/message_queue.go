@@ -69,7 +69,7 @@ func (q MessageQueue) Consume(consumerConfig ConsumerConfig) error {
 }
 
 func InitializeMessageQueue(redisUri string) *MessageQueue {
-	connection, err := rmq.OpenConnection("edwork-api-go", "tcp", redisUri, 1, nil)
+	connection, err := rmq.OpenConnection("rest-api-go", "tcp", redisUri, 1, nil)
 	if err != nil {
 		fmt.Println("error creating message queue: ", err)
 		os.Exit(1)

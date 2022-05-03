@@ -9,8 +9,8 @@ import (
 
 	"github.com/adjust/rmq/v4"
 	"github.com/h2non/bimg"
-	"github.com/tienloinguyen22/edwork-api-go/adapters"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/adapters"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 )
 
 type ConsumerService struct {

@@ -8,10 +8,10 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tienloinguyen22/edwork-api-go/adapters"
-	"github.com/tienloinguyen22/edwork-api-go/core/consumers"
-	"github.com/tienloinguyen22/edwork-api-go/core/users"
-	"github.com/tienloinguyen22/edwork-api-go/utils"
+	"github.com/tienloinguyen22/rest-api-go/adapters"
+	"github.com/tienloinguyen22/rest-api-go/core/consumers"
+	"github.com/tienloinguyen22/rest-api-go/core/users"
+	"github.com/tienloinguyen22/rest-api-go/utils"
 )
 
 type ProfileService struct {
