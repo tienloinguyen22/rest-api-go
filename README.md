@@ -2,5 +2,5 @@
 
 - Firebase
 - Postgresql
-- Redist Message Queue
+- Redis Message Queue
 - Dependencies Injection
