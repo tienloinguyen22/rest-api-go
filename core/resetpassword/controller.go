@@ -44,4 +44,18 @@ func (c ResetPasswordController) SetupRouter(router *gin.Engine) {
 		})
 		ctx.Abort()
 	})
+
+	controller.GET("/verify-token/:token", func (ctx *gin.Context) {
+		resetPasswordToken := ctx.Param("token")
+		verified, err := c.ResetPasswordService.VerifyResetPasswordToken(ctx, resetPasswordToken)
+		if err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
+
+		ctx.JSON(200, gin.H{
+			"verified": verified,
+		})
+		ctx.Abort()
+	})
 }

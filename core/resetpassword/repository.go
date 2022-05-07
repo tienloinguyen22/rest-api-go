@@ -31,6 +31,18 @@ func (r ResetPasswordTokenRepository) FindNonExpiredByUserID(ctx context.Context
 	return &resetPasswordToken, nil
 }
 
+func (r ResetPasswordTokenRepository) FindNonExpiredByID(ctx context.Context, id string) (*ResetPasswordToken, error) {
+	var resetPasswordToken ResetPasswordToken
+	query := `SELECT * FROM reset_password_tokens WHERE id=$1 AND expired_at>$2 AND completed=false ORDER BY expired_at DESC LIMIT 1`
+	if err := r.DB.GetContext(ctx, &resetPasswordToken, query, id, time.Now()); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &resetPasswordToken, nil
+}
+
 func (r ResetPasswordTokenRepository) Create(ctx context.Context, resetPasswordToken *ResetPasswordToken) (*ResetPasswordToken, error) {
 	query := `
 		INSERT INTO reset_password_tokens(

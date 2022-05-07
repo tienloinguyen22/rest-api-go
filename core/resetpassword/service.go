@@ -74,3 +74,16 @@ func (s ResetPasswordService) RequestResetPasswordToken(ctx *gin.Context, payloa
 		To: []string{payload.Email},
 	})
 }
+
+func (s ResetPasswordService) VerifyResetPasswordToken(ctx *gin.Context, resetPasswordToken string) (bool, error) {
+	existedResetPasswordToken, err := s.ResetPasswordTokenRepo.FindNonExpiredByID(ctx, resetPasswordToken)
+	if err != nil {
+		return false, utils.NewApiError(http.StatusInternalServerError, "resetpassword.verify-reset-password-token.cant-get-existed-forgot-password-token", err)
+	}
+
+	if existedResetPasswordToken == nil {
+		return false, nil
+	}
+
+	return true, nil
+}
