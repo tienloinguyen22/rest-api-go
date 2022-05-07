@@ -20,6 +20,31 @@ func NewResetPasswordController(router *gin.Engine, resetPasswordService *ResetP
 func (c ResetPasswordController) SetupRouter(router *gin.Engine) {
 	controller := router.Group("/api/reset-password")
 
+	controller.POST("", func (ctx *gin.Context) {
+		var payload ResetPasswordPayload
+		err := ctx.ShouldBindJSON(&payload)
+		if err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
+
+		if err := validator.Validate(&payload); err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
+
+		err = c.ResetPasswordService.ResetPassword(ctx, &payload)
+		if err != nil {
+			utils.HandleError(ctx, err)
+			return
+		}
+
+		ctx.JSON(200, gin.H{
+			"success": true,
+		})
+		ctx.Abort()
+	})
+
 	controller.POST("/request-token", func (ctx *gin.Context) {
 		var payload RequestResetPasswordTokenPayload
 		err := ctx.ShouldBindJSON(&payload)

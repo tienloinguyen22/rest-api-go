@@ -61,3 +61,25 @@ func (r ResetPasswordTokenRepository) Create(ctx context.Context, resetPasswordT
 	}
 	return resetPasswordToken, nil
 }
+
+func (r ResetPasswordTokenRepository) Expire(ctx context.Context, id string) (*ResetPasswordToken, error) {
+	query := `
+		UPDATE reset_password_tokens
+		SET
+			completed=$1
+		WHERE id=$2
+		RETURNING id, user_id, completed, expired_at, created_at, created_by
+	`
+	row := r.DB.QueryRowxContext(
+		ctx,
+		query,
+		true,
+		id,
+	)
+
+	resetPasswordToken := ResetPasswordToken{}
+	if err := row.Scan(&resetPasswordToken.ID, &resetPasswordToken.UserID, &resetPasswordToken.Completed, &resetPasswordToken.ExpiredAt, &resetPasswordToken.CreatedAt, &resetPasswordToken.CreatedBy); err != nil {
+		return &resetPasswordToken, err
+	}
+	return &resetPasswordToken, nil
+}

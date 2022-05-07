@@ -1,11 +1,13 @@
 package resetpassword
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	firebase "firebase.google.com/go"
+	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/tienloinguyen22/rest-api-go/adapters"
 	"github.com/tienloinguyen22/rest-api-go/core/consumers"
@@ -78,7 +80,7 @@ func (s ResetPasswordService) RequestResetPasswordToken(ctx *gin.Context, payloa
 func (s ResetPasswordService) VerifyResetPasswordToken(ctx *gin.Context, resetPasswordToken string) (bool, error) {
 	existedResetPasswordToken, err := s.ResetPasswordTokenRepo.FindNonExpiredByID(ctx, resetPasswordToken)
 	if err != nil {
-		return false, utils.NewApiError(http.StatusInternalServerError, "resetpassword.verify-reset-password-token.cant-get-existed-forgot-password-token", err)
+		return false, utils.NewApiError(http.StatusBadRequest, "resetpassword.verify-reset-password-token.cant-get-existed-forgot-password-token", err)
 	}
 
 	if existedResetPasswordToken == nil {
@@ -86,4 +88,41 @@ func (s ResetPasswordService) VerifyResetPasswordToken(ctx *gin.Context, resetPa
 	}
 
 	return true, nil
+}
+
+func (s ResetPasswordService) ResetPassword(ctx *gin.Context, payload *ResetPasswordPayload) error {
+	existedResetPasswordToken, err := s.ResetPasswordTokenRepo.FindNonExpiredByID(ctx, payload.ResetPasswordToken)
+	if err != nil {
+		return utils.NewApiError(http.StatusBadRequest, "resetpassword.reset-password.cant-get-existed-forgot-password-token", err)
+	}
+	if existedResetPasswordToken == nil {
+		return utils.NewApiError(http.StatusBadRequest, "resetpassword.reset-password.cant-get-existed-forgot-password-token", errors.New("reset password token not found"))
+	}
+
+	existedUser, err := s.UserRepo.FindByID(ctx, existedResetPasswordToken.UserID)
+	if err != nil {
+		return utils.NewApiError(http.StatusBadRequest, "resetpassword.reset-password.cant-get-existed-user", err)
+	}
+	if existedUser == nil {
+		return utils.NewApiError(http.StatusBadRequest, "resetpassword.reset-password.user-not-found", errors.New("user not found"))
+	}
+
+	authClient, err := s.FirebaseAdmin.Auth(ctx)
+	if err != nil {
+		return utils.NewApiError(http.StatusInternalServerError, "resetpassword.reset-password.cant-get-firebase-auth", err)
+	}
+
+	updateUserInfo := &auth.UserToUpdate{}
+	updateUserInfo.Password(payload.NewPassword)
+	_, err = authClient.UpdateUser(ctx, existedUser.FirebaseID, updateUserInfo)
+	if err != nil {
+		return utils.NewApiError(http.StatusInternalServerError, "resetpassword.reset-password.cant-update-user-password", err)
+	}
+
+	_, err = s.ResetPasswordTokenRepo.Expire(ctx, payload.ResetPasswordToken)
+	if err != nil {
+		utils.NewApiError(http.StatusInternalServerError, "resetpassword.reset-password.cant-expire-token", err)
+	}
+
+	return nil
 }
