@@ -1,32 +1,32 @@
 version: '3'
 services:
-  edwork-postgres:
-    container_name: edwork-postgres
+  rest-api-postgres:
+    container_name: rest-api-postgres
     image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       PGDATA: /data/postgres
     volumes:
-       - edwork-postgres-data:/data/postgres
+       - rest-api-postgres-data:/data/postgres
     ports:
       - "5432:5432"
     networks:
       - rest-api-go
     restart: unless-stopped
-  edwork-redis:
-    container_name: edwork-redis
+  rest-api-redis:
+    container_name: rest-api-redis
     image: redis:latest
     volumes:
-      - edwork-redis-data:/data/redis
+      - rest-api-redis-data:/data/redis
     ports:
       - 6379:6379
     networks:
       - rest-api-go
     restart: unless-stopped
 volumes:
-  edwork-postgres-data:
-  edwork-redis-data:
+  rest-api-postgres-data:
+  rest-api-redis-data:
 networks:
   rest-api-go:
     driver: bridge

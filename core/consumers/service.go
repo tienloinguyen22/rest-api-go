@@ -97,7 +97,7 @@ func (s ConsumerService) SendMail(delivery rmq.Delivery) {
 
 	subject := ""
 	if payload.Template == "forgot-password.html" {
-		subject = "[EdWORK] Thay đổi mật khẩu"
+		subject = "[REST API GO] Thay đổi mật khẩu"
 	}
 
 	s.EmailClient.SendMail(&adapters.SendMailPayload{
